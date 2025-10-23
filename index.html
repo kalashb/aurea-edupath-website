@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kalash Bhaiya">
+    <title>Kalash Bhaiya</title>
+    <link rel="icon" type="image/png" href="faviconpng">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/htmx.org@2.0.3/dist/htmx.js"
+        integrity="sha384-BBDmZzVt6vjz5YbQqZPtFZW82o8QotoM7RUp5xOxV3nSJ8u2pSdtzFAbGKzTlKtg"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="header-placeholder" hx-get="header.html" hx-trigger="load"></div> <!-- header -->
+    <section class="about">
+        <div class="profile-pic">
+            <img src="profilepic.png" alt="Profile Picture">
+        </div>
+        <div class="about-text">
+            <p>
+                I'm a second-year Computer Engineering student at the University of Toronto, I run the
+                <a href="https://www.funlearningyouth.org/" target="_blank">Fun Learning Youth Foundation</a>,
+                and I'm interested in a combination of human <strong>brain and technology</strong>. So far, I've explore
+                and liked
+                software, neuroscience, hardware, and education.
+            </p>
+
+            <p>
+                I have been involved in building devices (<a href="./projects/biocompute.html">DNA sequencer</a>),
+                programming hardware (<a href="./projects/nn.html">FPGAs</a>),
+                and programming software (<a href="./projects/gis.html">C++</a>, <a
+                    href="./projects/jon.html">React</a>, <a href="./projects/lumemory.html">Python</a>). I'm currently
+                exploring Machine Learning and Brain Machine Interfaces by helping build projects.
+            </p>
+
+            <p>
+                I'm originally from <a href="https://maps.app.goo.gl/eQ5HZZRAPanfEwJM9">Jalgaon, India</a>, where I
+                intensively participated
+                in Math Olympiads and Nonprofit Leadership. I have studied in TKGS Singapore for a part of high school
+                under the Ministry of Education of Singapore on a full scholarship. I moved to Canada
+                in 2023 with a full scholarship (Lester B. Pearson Scholarship) to study Computer
+                Engineering at the University of Toronto.
+            </p>
+        </div>
+    </section>
+
+
+    <section id="projects">
+        <h3 style="text-align: center; font-size:1.8em">Top 3 Things I've Recently Done (past 6 months)</h3>
+        <div class="projects">
+            <a href="projects/nn.html" class="card">
+                <h3>FPGA Inference Model</h3>
+                <i>FPGA, Verilog, SystemVerilog</i>
+                <p>Built an MNIST image classification model on the FPGA, trained in Python.</p>
+            </a>
+            <a href="projects/shikshak.html" class="card">
+                <h3>Shikshak</h3>
+                <i>Automation, Chatbot, Python</i>
+                <p>Learning assistant for children in Rural India to access in less internet.</p>
+            </a>
+            <a href="projects/biocompute.html" class="card">
+                <h3>BioCompute Inc.</h3>
+                <i>Circuitry, PCB Design, Fabrication</i>
+                <p>Made design of prototype of a DNA Reader.</p>
+            </a>
+
+
+        </div>
+    </section>
+    <h3 style="text-align: center; font-size:1.8em">Why are you here?</h3>
+    <p> <i><strong>If you're looking for any of these you've come to the right place</strong></i>: edge case handling /
+        execution of your program / anything related to logistics, constructive criticism, over-confidence on project ideas (still somehow complete it),
+        useless but fun webpages, fun night-in-the-city walks</p>
+    <p> <i><strong>Why you were probably pointed here / might know me from</strong></i>: FLY, Linkedin, University of
+        Toronto, WARP/ESPR, Atlas Fellowship, Emergent Ventures, JEE/Kota, Math Olympiads, Startups, Study Abroad
+        Scholarships</p>
+    <footer>
+        <p>Have something to say? Contact me at my <a href="mailto:kalashbhaiya@gmail.com">email</a> or send me an <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeCaHeSwPUYr_UUXpC3y5p1w0-pRjmbki0XO0JmVANTmdpMJw/viewform?usp=sharing">anonymous
+                form / feedback</a>.</p>
+    </footer>
+    <script src="script.js" type="module" defer></script>
+</body>
+
+</html>

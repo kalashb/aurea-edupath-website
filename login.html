@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to AUREA Edupath student portal to access your personalized career resources and exam preparation materials.">
+    <title>Login | AUREA Edupath</title>
+    <link rel="icon" type="image/png" href="aurealogo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <a href="index.html" class="logo">
+                        <img src="aurealogo.png" alt="Aurea Edupath" class="logo-img" style="height: 80px; max-width: 200px;">
+                    </a>
+                    <h1>Welcome Back</h1>
+                    <p>Login to access your personalized resources and study materials.</p>
+                </div>
+
+                <div class="auth-error" id="authError">
+                    <span id="errorMessage"></span>
+                </div>
+
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
+                        Login →
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+                    <p style="margin-top: 0.5rem;"><a href="index.html">← Back to Home</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './js/auth.js';
+
+        const loginForm = document.getElementById('loginForm');
+        const authError = document.getElementById('authError');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Check if already logged in
+        if (auth.isAuthenticated()) {
+            window.location.href = 'dashboard.html';
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+            authError.classList.remove('show');
+
+            try {
+                const result = auth.signIn(email, password);
+                
+                if (result.error) {
+                    throw new Error(result.error.message);
+                }
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                errorMessage.textContent = error.message || 'Invalid email or password. Please try again.';
+                authError.classList.add('show');
+                loginBtn.textContent = 'Login →';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
+

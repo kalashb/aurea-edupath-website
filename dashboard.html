@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AUREA Edupath Student Dashboard - Access your personalized career resources and exam preparation materials.">
+    <title>Dashboard | AUREA Edupath</title>
+    <link rel="icon" type="image/png" href="aurealogo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: var(--space-md);
+        }
+        
+        .dashboard-tab {
+            padding: var(--space-sm) var(--space-lg);
+            background: transparent;
+            border: none;
+            color: var(--gray-500);
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .dashboard-tab:hover {
+            color: var(--primary-500);
+            background: var(--primary-50);
+        }
+        
+        .dashboard-tab.active {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+        
+        .dashboard-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-500);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .exam-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-normal);
+        }
+        
+        .exam-card:hover {
+            border-color: var(--accent-200);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .exam-info h4 {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .exam-date {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--accent-600);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .exam-deadline {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            margin-top: var(--space-xs);
+        }
+        
+        .days-left {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--accent-100);
+            color: var(--accent-700);
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .days-left.urgent {
+            background: #fef2f2;
+            color: var(--error);
+        }
+        
+        .category-filter {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .category-btn {
+            padding: var(--space-xs) var(--space-md);
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+        }
+        
+        .profile-section {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            max-width: 600px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .profile-name h2 {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .profile-name p {
+            color: var(--gray-500);
+        }
+        
+        .profile-details {
+            display: grid;
+            gap: var(--space-lg);
+        }
+        
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-label {
+            color: var(--gray-500);
+            font-size: 0.9375rem;
+        }
+        
+        .profile-value {
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        
+        @media (max-width: 768px) {
+            .exam-card {
+                flex-direction: column;
+                gap: var(--space-md);
+                text-align: center;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="logo">
+                <img src="aurealogo.png" alt="Aurea Edupath" style="height: 50px; width: auto;">
+                <span style="color: #b33238; font-size: 1.4rem; font-weight: 700;">Aurea Edupath</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-cta">
+                <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+            </div>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="dashboard-header-inner">
+                    <div class="dashboard-welcome">
+                        <h1>Welcome back, <span id="userName">Student</span>!</h1>
+                        <p>Access your personalized resources and stay updated on upcoming exams.</p>
+                    </div>
+                    <div class="dashboard-meta">
+                        <div class="dashboard-badge" id="userClass">
+                            📚 Loading...
+                        </div>
+                        <div class="dashboard-badge" style="background: var(--accent-100); color: var(--accent-700);">
+                            🔑 Letter: <span id="userLetter">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="container">
+                <!-- Tabs -->
+                <div class="dashboard-tabs">
+                    <button class="dashboard-tab active" data-tab="resources">📚 Study Resources</button>
+                    <button class="dashboard-tab" data-tab="exams">📅 Upcoming Exams</button>
+                    <button class="dashboard-tab" data-tab="profile">👤 My Profile</button>
+                </div>
+
+                <!-- Resources Tab -->
+                <div class="tab-content active" id="resources-tab">
+                    <div class="category-filter" id="categoryFilter">
+                        <button class="category-btn active" data-category="all">All</button>
+                    </div>
+                    <div class="resources-grid" id="resourcesGrid">
+                        <!-- Resources will be loaded here -->
+                    </div>
+                    <div class="empty-state hidden" id="emptyResources">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No Resources Available</h3>
+                        <p>New study materials and resources will be added soon. Check back later!</p>
+                    </div>
+                </div>
+
+                <!-- Exams Tab -->
+                <div class="tab-content" id="exams-tab">
+                    <div id="examsList">
+                        <!-- Exams will be loaded here -->
+                    </div>
+                    <div class="empty-state hidden" id="emptyExams">
+                        <div class="empty-state-icon">✅</div>
+                        <h3>No Upcoming Exams</h3>
+                        <p>You're all caught up! There are no upcoming exams scheduled for your class right now.</p>
+                    </div>
+                </div>
+
+                <!-- Profile Tab -->
+                <div class="tab-content" id="profile-tab">
+                    <div class="profile-section">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="profileAvatar">S</div>
+                            <div class="profile-name">
+                                <h2 id="profileName">Student Name</h2>
+                                <p id="profileEmail">email@example.com</p>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-item">
+                                <span class="profile-label">Class/Grade</span>
+                                <span class="profile-value" id="profileClass">-</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Access Letter</span>
+                                <span class="profile-value" id="profileLetter">-</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Phone Number</span>
+                                <span class="profile-value" id="profilePhone">Not provided</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Member Since</span>
+                                <span class="profile-value" id="profileDate">-</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: var(--space-xl); padding-top: var(--space-xl); border-top: 1px solid var(--gray-200);">
+                            <p style="color: var(--gray-500); font-size: 0.875rem; margin-bottom: var(--space-md);">
+                                Need to update your information or have questions?
+                            </p>
+                            <a href="index.html#contact" class="btn btn-outline">Contact Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+                <p>© 2025 AUREA Edupath. All rights reserved.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                    <a href="#" aria-label="YouTube">▶️</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { auth, db, formatDate, getClassLabel } from './js/auth.js';
+
+        // Check authentication
+        const user = auth.getUser();
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut();
+            window.location.href = 'index.html';
+        });
+
+        // Populate user info
+        document.getElementById('userName').textContent = user.name.split(' ')[0];
+        document.getElementById('userClass').innerHTML = `📚 ${getClassLabel(user.student_class)}`;
+        document.getElementById('userLetter').textContent = user.access_letter;
+
+        // Profile tab info
+        document.getElementById('profileAvatar').textContent = user.name.charAt(0).toUpperCase();
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileEmail').textContent = user.email;
+        document.getElementById('profileClass').textContent = getClassLabel(user.student_class);
+        document.getElementById('profileLetter').textContent = user.access_letter;
+
+        // Get full user profile for additional details
+        const fullProfile = db.getUserProfile(user.id);
+        if (fullProfile) {
+            document.getElementById('profilePhone').textContent = fullProfile.phone || 'Not provided';
+            document.getElementById('profileDate').textContent = formatDate(fullProfile.created_at);
+        }
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.dashboard-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+
+        // Load resources
+        const resources = db.getResourcesForUser(user);
+        const resourcesGrid = document.getElementById('resourcesGrid');
+        const emptyResources = document.getElementById('emptyResources');
+        const categoryFilter = document.getElementById('categoryFilter');
+
+        if (resources.length === 0) {
+            emptyResources.classList.remove('hidden');
+        } else {
+            // Get unique categories
+            const categories = [...new Set(resources.map(r => r.category))];
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-btn';
+                btn.dataset.category = category;
+                btn.textContent = category;
+                categoryFilter.appendChild(btn);
+            });
+
+            // Render resources
+            function renderResources(filter = 'all') {
+                const filtered = filter === 'all' 
+                    ? resources 
+                    : resources.filter(r => r.category === filter);
+                
+                resourcesGrid.innerHTML = filtered.map(resource => `
+                    <div class="resource-card">
+                        <span class="resource-category">${resource.category}</span>
+                        <h3>${resource.title}</h3>
+                        <p>${resource.description}</p>
+                        <div class="resource-meta">
+                            <span class="resource-date">${formatDate(resource.date)}</span>
+                            <a href="${resource.link}" class="btn btn-primary btn-sm">View →</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderResources();
+
+            // Category filter functionality
+            categoryFilter.addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-btn')) {
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderResources(e.target.dataset.category);
+                }
+            });
+        }
+
+        // Load upcoming exams
+        const exams = db.getUpcomingExamsForUser(user);
+        const examsList = document.getElementById('examsList');
+        const emptyExams = document.getElementById('emptyExams');
+
+        if (exams.length === 0) {
+            emptyExams.classList.remove('hidden');
+        } else {
+            examsList.innerHTML = exams.map(exam => {
+                const examDate = new Date(exam.date);
+                const today = new Date();
+                const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+                const isUrgent = daysLeft <= 30;
+                
+                return `
+                    <div class="exam-card">
+                        <div class="exam-info">
+                            <h4>${exam.name}</h4>
+                            <span class="exam-date">📅 ${formatDate(exam.date)}</span>
+                            <p class="exam-deadline">Registration deadline: ${formatDate(exam.registration_deadline)}</p>
+                        </div>
+                        <div class="days-left ${isUrgent ? 'urgent' : ''}">
+                            ${daysLeft} days left
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
+

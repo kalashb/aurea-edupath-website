@@ -3,178 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sign up for AUREA Edupath student portal to access your personalized career resources and exam preparation materials.">
-    <title>Sign Up | AUREA Edupath</title>
+    <meta name="description" content="Get access to AUREA Edupath student portal.">
+    <title>Get Access | AUREA Edupath</title>
     <link rel="icon" type="image/png" href="aurealogo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .letter-info {
-            padding: 0.75rem 1rem;
-            background: var(--primary-50);
-            border: 1px solid var(--primary-200);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            color: var(--primary-700);
-            margin-bottom: var(--space-lg);
-        }
-        .letter-info strong {
-            color: var(--primary-800);
-        }
-    </style>
 </head>
 <body>
     <div class="auth-page">
-        <div class="auth-container" style="max-width: 480px;">
+        <div class="auth-container">
             <div class="auth-card">
                 <div class="auth-header">
                     <a href="index.html" class="logo">
                         <img src="aurealogo.png" alt="Aurea Edupath" class="logo-img" style="height: 80px; max-width: 200px;">
                     </a>
-                    <h1>Create Account</h1>
-                    <p>Join AUREA Edupath to access personalized career resources.</p>
+                    <h1>Get Access</h1>
+                    <p>The student portal is available exclusively for enrolled students.</p>
                 </div>
 
-                <div class="letter-info">
-                    📝 <strong>Important:</strong> You need a valid access letter from Mrs. Pallavi to sign up. This letter is provided to subscribed students only.
-                </div>
-
-                <div class="auth-error" id="authError">
-                    <span id="errorMessage"></span>
-                </div>
-
-                <form class="auth-form" id="signupForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" placeholder="Your full name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210">
-                        </div>
-                    </div>
+                <div style="text-align: center; padding: var(--space-xl) 0;">
+                    <div style="font-size: 3rem; margin-bottom: var(--space-md);">🔐</div>
+                    <h3 style="margin-bottom: var(--space-md);">Access by Invitation Only</h3>
+                    <p style="color: var(--gray-600); margin-bottom: var(--space-xl); line-height: 1.7;">
+                        To get access to the student portal, you need to be enrolled with AUREA Edupath. 
+                        Mrs. Pallavi will provide you with your login credentials (email + access letter) 
+                        after enrollment.
+                    </p>
                     
-                    <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                        <a href="index.html#contact" class="btn btn-primary btn-lg">
+                            📞 Contact Mrs. Pallavi
+                        </a>
+                        <a href="https://wa.me/+919156296800" target="_blank" class="btn btn-outline btn-lg">
+                            💬 WhatsApp Us
+                        </a>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password *</label>
-                        <input type="password" id="password" name="password" placeholder="Min. 6 characters" required minlength="6">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="studentClass">Your Class/Grade *</label>
-                            <select id="studentClass" name="studentClass" required>
-                                <option value="">Select class</option>
-                                <option value="8">Class 8</option>
-                                <option value="9">Class 9</option>
-                                <option value="10">Class 10</option>
-                                <option value="11-science">Class 11 (Science)</option>
-                                <option value="11-commerce">Class 11 (Commerce)</option>
-                                <option value="11-arts">Class 11 (Arts)</option>
-                                <option value="12-science">Class 12 (Science)</option>
-                                <option value="12-commerce">Class 12 (Commerce)</option>
-                                <option value="12-arts">Class 12 (Arts)</option>
-                                <option value="graduate">Graduate</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="accessLetter">Access Letter *</label>
-                            <input type="text" id="accessLetter" name="accessLetter" placeholder="e.g., A, B, C..." required maxlength="5" style="text-transform: uppercase;">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-lg" id="signupBtn">
-                        Create Account →
-                    </button>
-                </form>
+                </div>
 
                 <div class="auth-footer">
-                    <p>Already have an account? <a href="login.html">Login here</a></p>
+                    <p>Already have access? <a href="login.html">Login here</a></p>
                     <p style="margin-top: 0.5rem;"><a href="index.html">← Back to Home</a></p>
                 </div>
             </div>
         </div>
     </div>
-
-    <script type="module">
-        import { auth, db } from './js/auth.js';
-
-        const signupForm = document.getElementById('signupForm');
-        const authError = document.getElementById('authError');
-        const errorMessage = document.getElementById('errorMessage');
-        const signupBtn = document.getElementById('signupBtn');
-
-        // Check if already logged in
-        if (auth.isAuthenticated()) {
-            window.location.href = 'dashboard.html';
-        }
-        
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const studentClass = document.getElementById('studentClass').value;
-            const accessLetter = document.getElementById('accessLetter').value.trim().toUpperCase();
-
-            signupBtn.textContent = 'Creating account...';
-            signupBtn.disabled = true;
-            authError.classList.remove('show');
-
-            try {
-                // First validate the access letter exists
-                const isValidLetter = db.validateAccessLetter(accessLetter);
-                
-                if (!isValidLetter) {
-                    throw new Error('Invalid access letter. Please check the letter provided by Mrs. Pallavi and try again.');
-                }
-
-                // Create the account (also validates letter for class)
-                const result = auth.signUp(email, password, {
-                    name,
-                    phone,
-                    student_class: studentClass,
-                    access_letter: accessLetter
-                });
-                
-                if (result.error) {
-                    throw new Error(result.error.message);
-                }
-
-                // Show success message
-                document.querySelector('.auth-card').innerHTML = `
-                    <div class="auth-header" style="padding: 2rem 0;">
-                        <a href="index.html" class="logo" style="justify-content: center;">
-                            <img src="aurealogo.png" alt="Aurea Edupath" class="logo-img" style="height: 80px; max-width: 200px;">
-                        </a>
-                        <div style="font-size: 4rem; margin: 1.5rem 0;">🎉</div>
-                        <h1 style="color: var(--success);">Account Created!</h1>
-                        <p style="margin-top: 1rem;">
-                            Welcome to AUREA Edupath, ${name}! Your account has been created successfully.
-                        </p>
-                        <p style="margin-top: 0.5rem;">
-                            You can now log in to access your personalized resources.
-                        </p>
-                        <a href="login.html" class="btn btn-primary" style="margin-top: 1.5rem;">Go to Login →</a>
-                    </div>
-                `;
-            } catch (error) {
-                errorMessage.textContent = error.message;
-                authError.classList.add('show');
-                signupBtn.textContent = 'Create Account →';
-                signupBtn.disabled = false;
-            }
-        });
-    </script>
 </body>
 </html>
-

@@ -19,8 +19,8 @@
                     <a href="index.html" class="logo">
                         <img src="aurealogo.png" alt="Aurea Edupath" class="logo-img" style="height: 80px; max-width: 200px;">
                     </a>
-                    <h1>Welcome Back</h1>
-                    <p>Login to access your personalized resources and study materials.</p>
+                    <h1>Student Login</h1>
+                    <p>Enter your registered email and the access letter provided by Mrs. Pallavi.</p>
                 </div>
 
                 <div class="auth-error" id="authError">
@@ -33,8 +33,9 @@
                         <input type="email" id="email" name="email" placeholder="your@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required minlength="6">
+                        <label for="accessLetter">Access Letter</label>
+                        <input type="text" id="accessLetter" name="accessLetter" placeholder="Enter your access letter" required>
+                        <small style="color: var(--gray-500); margin-top: 0.25rem; display: block;">The unique code provided by Mrs. Pallavi</small>
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">
                         Login →
@@ -42,7 +43,7 @@
                 </form>
 
                 <div class="auth-footer">
-                    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+                    <p>Don't have access? <a href="#contact" onclick="window.location.href='index.html#contact'">Contact Mrs. Pallavi</a></p>
                     <p style="margin-top: 0.5rem;"><a href="index.html">← Back to Home</a></p>
                 </div>
             </div>
@@ -66,14 +67,14 @@
             e.preventDefault();
             
             const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const accessLetter = document.getElementById('accessLetter').value;
 
             loginBtn.textContent = 'Logging in...';
             loginBtn.disabled = true;
             authError.classList.remove('show');
 
             try {
-                const result = auth.signIn(email, password);
+                const result = await auth.login(email, accessLetter);
                 
                 if (result.error) {
                     throw new Error(result.error.message);
@@ -82,7 +83,7 @@
                 // Redirect to dashboard
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                errorMessage.textContent = error.message || 'Invalid email or password. Please try again.';
+                errorMessage.textContent = error.message || 'Login failed. Please try again.';
                 authError.classList.add('show');
                 loginBtn.textContent = 'Login →';
                 loginBtn.disabled = false;
@@ -91,4 +92,3 @@
     </script>
 </body>
 </html>
-

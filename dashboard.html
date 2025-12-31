@@ -409,85 +409,93 @@
             });
         });
 
-        // Load resources
-        const resources = db.getResourcesForUser(user);
-        const resourcesGrid = document.getElementById('resourcesGrid');
-        const emptyResources = document.getElementById('emptyResources');
-        const categoryFilter = document.getElementById('categoryFilter');
+        // Load resources (async)
+        async function loadResources() {
+            const resources = await db.getResourcesForUser(user);
+            const resourcesGrid = document.getElementById('resourcesGrid');
+            const emptyResources = document.getElementById('emptyResources');
+            const categoryFilter = document.getElementById('categoryFilter');
 
-        if (resources.length === 0) {
-            emptyResources.classList.remove('hidden');
-        } else {
-            // Get unique categories
-            const categories = [...new Set(resources.map(r => r.category))];
-            
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn';
-                btn.dataset.category = category;
-                btn.textContent = category;
-                categoryFilter.appendChild(btn);
-            });
-
-            // Render resources
-            function renderResources(filter = 'all') {
-                const filtered = filter === 'all' 
-                    ? resources 
-                    : resources.filter(r => r.category === filter);
+            if (resources.length === 0) {
+                emptyResources.classList.remove('hidden');
+            } else {
+                // Get unique categories
+                const categories = [...new Set(resources.map(r => r.category))];
                 
-                resourcesGrid.innerHTML = filtered.map(resource => `
-                    <div class="resource-card">
-                        <span class="resource-category">${resource.category}</span>
-                        <h3>${resource.title}</h3>
-                        <p>${resource.description}</p>
-                        <div class="resource-meta">
-                            <span class="resource-date">${formatDate(resource.date)}</span>
-                            <a href="${resource.link}" class="btn btn-primary btn-sm">View →</a>
+                categories.forEach(category => {
+                    const btn = document.createElement('button');
+                    btn.className = 'category-btn';
+                    btn.dataset.category = category;
+                    btn.textContent = category;
+                    categoryFilter.appendChild(btn);
+                });
+
+                // Render resources
+                function renderResources(filter = 'all') {
+                    const filtered = filter === 'all' 
+                        ? resources 
+                        : resources.filter(r => r.category === filter);
+                    
+                    resourcesGrid.innerHTML = filtered.map(resource => `
+                        <div class="resource-card">
+                            <span class="resource-category">${resource.category}</span>
+                            <h3>${resource.title}</h3>
+                            <p>${resource.description}</p>
+                            <div class="resource-meta">
+                                <span class="resource-date">${formatDate(resource.date)}</span>
+                                <a href="${resource.link}" class="btn btn-primary btn-sm">View →</a>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
-            }
-
-            renderResources();
-
-            // Category filter functionality
-            categoryFilter.addEventListener('click', (e) => {
-                if (e.target.classList.contains('category-btn')) {
-                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    renderResources(e.target.dataset.category);
+                    `).join('');
                 }
-            });
+
+                renderResources();
+
+                // Category filter functionality
+                categoryFilter.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('category-btn')) {
+                        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                        renderResources(e.target.dataset.category);
+                    }
+                });
+            }
         }
 
-        // Load upcoming exams
-        const exams = db.getUpcomingExamsForUser(user);
-        const examsList = document.getElementById('examsList');
-        const emptyExams = document.getElementById('emptyExams');
+        // Load upcoming exams (async)
+        async function loadExams() {
+            const exams = await db.getUpcomingExamsForUser(user);
+            const examsList = document.getElementById('examsList');
+            const emptyExams = document.getElementById('emptyExams');
 
-        if (exams.length === 0) {
-            emptyExams.classList.remove('hidden');
-        } else {
-            examsList.innerHTML = exams.map(exam => {
-                const examDate = new Date(exam.date);
-                const today = new Date();
-                const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
-                const isUrgent = daysLeft <= 30;
-                
-                return `
-                    <div class="exam-card">
-                        <div class="exam-info">
-                            <h4>${exam.name}</h4>
-                            <span class="exam-date">📅 ${formatDate(exam.date)}</span>
-                            <p class="exam-deadline">Registration deadline: ${formatDate(exam.registration_deadline)}</p>
+            if (exams.length === 0) {
+                emptyExams.classList.remove('hidden');
+            } else {
+                examsList.innerHTML = exams.map(exam => {
+                    const examDate = new Date(exam.date);
+                    const today = new Date();
+                    const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+                    const isUrgent = daysLeft <= 30;
+                    
+                    return `
+                        <div class="exam-card">
+                            <div class="exam-info">
+                                <h4>${exam.name}</h4>
+                                <span class="exam-date">📅 ${formatDate(exam.date)}</span>
+                                <p class="exam-deadline">Registration deadline: ${formatDate(exam.registration_deadline)}</p>
+                            </div>
+                            <div class="days-left ${isUrgent ? 'urgent' : ''}">
+                                ${daysLeft} days left
+                            </div>
                         </div>
-                        <div class="days-left ${isUrgent ? 'urgent' : ''}">
-                            ${daysLeft} days left
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
         }
+
+        // Load data
+        loadResources();
+        loadExams();
     </script>
 </body>
 </html>

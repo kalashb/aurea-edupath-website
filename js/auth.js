@@ -1,25 +1,33 @@
 // ============================================
 // AUREA Edupath - Authentication System
-// Simple localStorage-based auth for demo purposes
-// Replace with Supabase or other backend for production
+// Uses Google Sheets as private backend
 // ============================================
 
-import { VALID_ACCESS_LETTERS, RESOURCES, UPCOMING_EXAMS } from './data.js';
+import { API_CONFIG, CLASS_LABELS, DEMO_USER, DEMO_RESOURCES, DEMO_EXAMS } from './data.js';
 
-const USERS_KEY = 'aurea_users';
 const SESSION_KEY = 'aurea_session';
 
 // ============================================
-// User Management
+// API Functions (calls Google Apps Script)
 // ============================================
 
-function getUsers() {
-    const users = localStorage.getItem(USERS_KEY);
-    return users ? JSON.parse(users) : {};
-}
+async function callAPI(action, data = {}) {
+    if (!API_CONFIG.isConfigured) {
+        // Demo mode - use local demo data
+        return { demo: true };
+    }
 
-function saveUsers(users) {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    try {
+        const response = await fetch(API_CONFIG.endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, ...data })
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return { error: 'Unable to connect. Please try again.' };
+    }
 }
 
 // ============================================
@@ -27,88 +35,59 @@ function saveUsers(users) {
 // ============================================
 
 export const auth = {
-    // Check if access letter is valid for the given class
-    validateAccessLetter(letter, studentClass) {
-        const upperLetter = letter.toUpperCase();
-        const allowedClasses = VALID_ACCESS_LETTERS[upperLetter];
-
-        if (!allowedClasses) {
-            return { valid: false, error: 'Invalid access letter. Please check the letter provided by Mrs. Pallavi.' };
-        }
-
-        // '*' means all classes are allowed
-        if (allowedClasses.includes('*') || allowedClasses.includes(studentClass)) {
-            return { valid: true };
-        }
-
-        return {
-            valid: false,
-            error: `This access letter is not valid for your class level. Please contact Mrs. Pallavi for the correct letter.`
-        };
-    },
-
-    // Sign up a new user
-    signUp(email, password, userData) {
-        const users = getUsers();
+    // Login with email and access letter
+    async login(email, accessLetter) {
         const normalizedEmail = email.toLowerCase().trim();
+        const normalizedLetter = accessLetter.toUpperCase().trim();
 
-        // Check if user already exists
-        if (users[normalizedEmail]) {
-            return { error: { message: 'An account with this email already exists. Please login instead.' } };
+        // Demo mode check
+        if (!API_CONFIG.isConfigured) {
+            if (normalizedEmail === DEMO_USER.email && normalizedLetter === DEMO_USER.access_letter) {
+                const session = {
+                    user: { ...DEMO_USER, id: 'demo' },
+                    created_at: new Date().toISOString()
+                };
+                localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+                return { data: { session, user: session.user }, error: null };
+            }
+            return {
+                error: {
+                    message: 'Demo mode: Use demo@aureaedupath.com with access letter DEMO'
+                }
+            };
         }
 
-        // Validate access letter
-        const letterValidation = this.validateAccessLetter(userData.access_letter, userData.student_class);
-        if (!letterValidation.valid) {
-            return { error: { message: letterValidation.error } };
-        }
-
-        // Create user
-        const user = {
-            id: Date.now().toString(),
+        // Production mode - call API
+        const result = await callAPI('login', {
             email: normalizedEmail,
-            password: btoa(password), // Simple encoding (use proper hashing in production)
-            name: userData.name,
-            phone: userData.phone || '',
-            student_class: userData.student_class,
-            access_letter: userData.access_letter.toUpperCase(),
-            created_at: new Date().toISOString()
-        };
+            accessLetter: normalizedLetter
+        });
 
-        users[normalizedEmail] = user;
-        saveUsers(users);
-
-        return { data: { user }, error: null };
-    },
-
-    // Sign in existing user
-    signIn(email, password) {
-        const users = getUsers();
-        const normalizedEmail = email.toLowerCase().trim();
-        const user = users[normalizedEmail];
-
-        if (!user) {
-            return { error: { message: 'No account found with this email. Please sign up first.' } };
+        if (result.error) {
+            return { error: { message: result.error } };
         }
 
-        if (user.password !== btoa(password)) {
-            return { error: { message: 'Incorrect password. Please try again.' } };
+        if (!result.success) {
+            return {
+                error: {
+                    message: result.message || 'Login failed. Please check your credentials.'
+                }
+            };
         }
 
         // Create session
         const session = {
             user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                student_class: user.student_class,
-                access_letter: user.access_letter
+                id: normalizedEmail,
+                email: normalizedEmail,
+                name: result.user.name,
+                student_class: result.user.student_class,
+                access_letter: result.user.access_letter
             },
             created_at: new Date().toISOString()
         };
 
         localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-
         return { data: { session, user: session.user }, error: null };
     },
 
@@ -135,7 +114,7 @@ export const auth = {
         return this.getSession() !== null;
     },
 
-    // Auth state change listener (simplified)
+    // Auth state change listener
     onAuthStateChange(callback) {
         const session = this.getSession();
         callback(session ? 'SIGNED_IN' : 'SIGNED_OUT', session);
@@ -147,49 +126,55 @@ export const auth = {
 // ============================================
 
 export const db = {
-    // Validate access letter (used during signup)
-    validateAccessLetter(letter) {
-        const upperLetter = letter.toUpperCase();
-        return VALID_ACCESS_LETTERS.hasOwnProperty(upperLetter);
-    },
-
     // Get resources for current user
-    getResourcesForUser(user) {
+    async getResourcesForUser(user) {
         if (!user) return [];
 
-        const userLetter = user.access_letter.toUpperCase();
-        const userClass = user.student_class;
-        const resources = RESOURCES[userLetter] || [];
+        // Demo mode
+        if (!API_CONFIG.isConfigured) {
+            return DEMO_RESOURCES;
+        }
 
-        // Filter resources by class level
-        return resources.filter(resource => {
-            if (resource.class_levels.includes('*')) return true;
-            return resource.class_levels.includes(userClass);
-        }).sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Production mode - call API
+        const result = await callAPI('getResources', {
+            email: user.email,
+            accessLetter: user.access_letter,
+            studentClass: user.student_class
+        });
+
+        if (result.error || !result.resources) {
+            return DEMO_RESOURCES;
+        }
+
+        return result.resources;
     },
 
     // Get upcoming exams for user's class
-    getUpcomingExamsForUser(user) {
+    async getUpcomingExamsForUser(user) {
         if (!user) return [];
 
-        const userClass = user.student_class;
-        const today = new Date();
+        // Demo mode
+        if (!API_CONFIG.isConfigured) {
+            return DEMO_EXAMS;
+        }
 
-        return UPCOMING_EXAMS.filter(exam => {
-            const examDate = new Date(exam.date);
-            return examDate >= today && exam.applicable_classes.includes(userClass);
-        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+        // Production mode - call API
+        const result = await callAPI('getExams', {
+            studentClass: user.student_class
+        });
+
+        if (result.error || !result.exams) {
+            return DEMO_EXAMS;
+        }
+
+        return result.exams;
     },
 
     // Get user profile
-    getUserProfile(userId) {
-        const users = getUsers();
-        for (const email in users) {
-            if (users[email].id === userId) {
-                const user = { ...users[email] };
-                delete user.password; // Don't return password
-                return user;
-            }
+    getUserProfile(email) {
+        const session = auth.getSession();
+        if (session && session.user.email === email.toLowerCase()) {
+            return session.user;
         }
         return null;
     }
@@ -209,21 +194,8 @@ export function formatDate(dateString) {
 }
 
 export function getClassLabel(classCode) {
-    const labels = {
-        '8': 'Class 8',
-        '9': 'Class 9',
-        '10': 'Class 10',
-        '11-science': 'Class 11 (Science)',
-        '11-commerce': 'Class 11 (Commerce)',
-        '11-arts': 'Class 11 (Arts)',
-        '12-science': 'Class 12 (Science)',
-        '12-commerce': 'Class 12 (Commerce)',
-        '12-arts': 'Class 12 (Arts)',
-        'graduate': 'Graduate'
-    };
-    return labels[classCode] || classCode;
+    return CLASS_LABELS[classCode] || classCode;
 }
 
-// Export for global access if needed
+// Export for global access
 window.AureaAuth = { auth, db, formatDate, getClassLabel };
-

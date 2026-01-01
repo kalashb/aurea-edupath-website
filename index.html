@@ -437,38 +437,49 @@
         }
         
         .about-grid {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: var(--space-3xl);
-            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
         }
         
-        @media (max-width: 900px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
+        .about-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .about-text {
+            text-align: center;
+        }
+        
+        .about-text p {
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .about-image {
-            position: relative;
+            flex-shrink: 0;
         }
         
         .about-image-frame {
-            aspect-ratio: 3/4;
+            width: 160px;
+            height: 160px;
             background: linear-gradient(135deg, var(--primary-200), var(--accent-200));
-            border-radius: var(--radius-xl);
+            border-radius: 50%;
             overflow: hidden;
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: 4px solid white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         
         .about-image-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 20%;
         }
         
         .about-image-placeholder {
@@ -478,14 +489,26 @@
         }
         
         .about-image-decoration {
-            position: absolute;
-            bottom: -20px;
-            right: -20px;
-            width: 150px;
-            height: 150px;
-            background: var(--accent-500);
-            border-radius: var(--radius-xl);
-            z-index: -1;
+            display: none;
+        }
+        
+        .about-header-text {
+            text-align: center;
+        }
+        
+        .about-header-text h2 {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .about-header-text .about-role {
+            color: var(--primary-500);
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin: 0;
+        }
+        
+        .about-stats {
+            justify-content: center;
         }
         
         .about-text h2 {
@@ -663,8 +686,8 @@
             }
             
             .about-image-frame {
-                max-width: 280px;
-                margin: 0 auto var(--space-xl);
+                width: 120px;
+                height: 120px;
             }
             
             .about-text h2 {
@@ -782,42 +805,46 @@
                 
                 <!-- Content -->
                 <div class="why-content">
-                    <h2>Why Choose <span class="text-gradient">Aurea Edupath</span>?</h2>
-                    <p class="why-intro">
-                        My children, <strong>Kalash</strong> (Pearson Scholar, University of Toronto) and <strong>Devesh</strong> (MIT), both earned <strong>full scholarships</strong>. This wasn't luck. It was years of intentional planning, and I want to share what I've learned with you.
+                    <h2>Why Choose <span class="text-gradient">Aurea Edupath</span></h2>
+                    
+                    <p class="why-intro" style="font-size: 1.2rem; font-style: italic; color: var(--gray-700); margin-bottom: var(--space-lg);">
+                        Exceptional outcomes are never accidental. They are designed.
                     </p>
                     
-                    <p style="color: var(--gray-600);">With Aurea, you'll be guided by someone who has:</p>
-                    <ul style="margin-left: 20px;">
-                        <li>🎯 Treated education as a <strong>long-term strategic project</strong></li>
-                        <li>🏅 Walked the <strong>Olympiad journey</strong> firsthand with her own children</li>
-                        <li>💪 Made <strong>real sacrifices</strong> and tough decisions for their futures</li>
-                        <li>🌍 Seen it through to <strong>global success</strong></li>
+                    <p style="margin-bottom: var(--space-md); line-height: 1.8;">
+                        My children, <strong>Kalash</strong> (Pearson Scholar, University of Toronto) and <strong>Devesh</strong> (MIT), earned full scholarships through years of deliberate planning, principled decisions, and strategic foresight - not chance.
+                    </p>
+                    
+                    <p style="margin-bottom: var(--space-xl); line-height: 1.8;">
+                        Aurea Edupath was created to offer families this same clarity, so their children's futures are shaped with intention, not pressure.
+                    </p>
+                    
+                    <h3 style="font-size: 1.25rem; margin-bottom: var(--space-md); color: var(--gray-900);">The Aurea Advantage</h3>
+                    
+                    <ul style="list-style: none; margin: 0 0 var(--space-xl) 0; padding: 0;">
+                        <li style="display: flex; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                            <span>🎯</span> Education treated as a <strong>long-term strategic investment</strong>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                            <span>🏅</span> Firsthand expertise in <strong>Olympiads and elite global admissions</strong>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                            <span>💪</span> Values-led choices that prioritize <strong>enduring excellence</strong>
+                        </li>
+                        <li style="display: flex; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                            <span>🌍</span> Proven pathways to <strong>world-class universities with full financial support</strong>
+                        </li>
                     </ul>
                     
-                    <ul class="achievement-list">
-                        <li>
-                            <div class="achievement-icon">🤝</div>
-                            <div class="achievement-text">
-                                <h4>Trusted by Parents</h4>
-                                <p>Families across India have trusted us to guide their children's educational journey.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="achievement-icon">🎯</div>
-                            <div class="achievement-text">
-                                <h4>Personalized Roadmaps</h4>
-                                <p>Every child is unique. We create custom strategies aligned with their strengths and dreams.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="achievement-icon">🌱</div>
-                            <div class="achievement-text">
-                                <h4>Beyond Academics</h4>
-                                <p>We nurture confidence, curiosity, and purpose, not just grades.</p>, 
-                            </div>
-                        </li>
-                    </ul>
+                    <h3 style="font-size: 1.25rem; margin-bottom: var(--space-md); color: var(--gray-900);">Beyond Outcomes</h3>
+                    
+                    <p style="margin-bottom: var(--space-sm); line-height: 1.8;">
+                        We work with families who value <strong>depth over noise</strong> and <strong>legacy over labels</strong>.
+                    </p>
+                    
+                    <p style="line-height: 1.8; color: var(--gray-600);">
+                        Beyond academics, we nurture confidence, curiosity, and purpose - the foundations of lifelong success.
+                    </p>
                 </div>
             </div>
         </div>
@@ -940,15 +967,21 @@
     <section class="about-section" id="about">
         <div class="container">
             <div class="about-grid">
-                <div class="about-image">
-                    <div class="about-image-frame">
-                        <img src="pallavi.png" alt="Mrs. Pallavi Bhaiya">
+                <!-- Header with photo and name -->
+                <div class="about-header">
+                    <div class="about-image">
+                        <div class="about-image-frame">
+                            <img src="pallavi.png" alt="Mrs. Pallavi Bhaiya">
+            </div>
                     </div>
-                    <div class="about-image-decoration"></div>
+                    <div class="about-header-text">
+                        <h2>Meet Mrs. Pallavi Bhaiya</h2>
+                        <p class="about-role">Educational Parenting Coach & Career Counsellor</p>
+                    </div>
                 </div>
+
+                <!-- About content -->
                 <div class="about-text">
-                    <h2>Meet Mrs. Pallavi Bhaiya</h2>
-                    <p class="about-role">Educational Parenting Coach & Career Counsellor</p>
                     <p>
                         I am a proud mother and an Educational Parenting Coach with over 20 years of experience. My journey began as a parent who simply wanted the best for her children and that journey changed my life.
                     </p>
